@@ -3,8 +3,6 @@ class DiversionsApp {
     constructor() {
         this.map = null;
         this.markers = [];
-        this.heatmapLayer = null;
-        this.boundariesLayer = null;
         this.diversionLineLayer = null;
         this.currentData = nswDiversionsData;
         this.dataTable = null;
@@ -531,20 +529,8 @@ class DiversionsApp {
         });
         
         // Layer controls
-        document.getElementById('show-boundaries').addEventListener('change', (e) => {
-            this.toggleBoundaries(e.target.checked);
-        });
-        
-        document.getElementById('show-heatmap').addEventListener('change', (e) => {
-            this.toggleHeatmap(e.target.checked);
-        });
-        
         document.getElementById('show-diversion-line').addEventListener('change', (e) => {
             this.toggleDiversionLine(e.target.checked);
-        });
-        
-        document.getElementById('show-labels').addEventListener('change', (e) => {
-            this.toggleLabels(e.target.checked);
         });
     }
 
@@ -573,30 +559,6 @@ class DiversionsApp {
     }
 
     // Toggle map layers
-    toggleBoundaries(show) {
-        // TODO: Implement boundaries layer when GeoJSON data is available
-    }
-
-    toggleHeatmap(show) {
-        if (show && !this.heatmapLayer) {
-            const heatmapData = this.currentData.map(area => [
-                area.coordinates[0],
-                area.coordinates[1],
-                area.diversionRate / 100
-            ]);
-            
-            this.heatmapLayer = L.heatLayer(heatmapData, {
-                blur: 25,
-                maxZoom: 18,
-                minOpacity: 0.3,
-                radius: 35
-            }).addTo(this.map);
-        } else if (!show && this.heatmapLayer) {
-            this.map.removeLayer(this.heatmapLayer);
-            this.heatmapLayer = null;
-        }
-    }
-
     toggleDiversionLine(show) {
         if (show && !this.diversionLineLayer) {
             this.showDiversionLineAnalysis(true);
@@ -605,6 +567,8 @@ class DiversionsApp {
             this.showDiversionLineAnalysis(false);
             this.map.removeLayer(this.diversionLineLayer);
             this.diversionLineLayer = null;
+            // Restore original markers
+            this.addMarkersToMap();
         }
     }
 
@@ -675,14 +639,14 @@ class DiversionsApp {
 
         boundaryLine.bindPopup(`
             <div class="boundary-popup">
-                <h5><i class="fas fa-divide me-2"></i>Diversion Line Boundary</h5>
+                <h5><i class="fas fa-divide me-2"></i>Diversion Line Boundary (Latte Line)</h5>
                 <p><strong>Inner Zone:</strong> Higher diversion rates<br>
                 <strong>Outer Zone:</strong> Lower diversion rates</p>
                 <small class="text-muted">Approximate geographic boundary</small>
             </div>
         `);
 
-        this.diversionLineLayer = L.layerGroup([boundaryLine]);
+        this.diversionLineLayer = boundaryLine;
     }
 
     showDiversionLineAnalysis(show) {
@@ -721,10 +685,6 @@ class DiversionsApp {
         } else {
             infoPanel.style.display = 'none';
         }
-    }
-
-    toggleLabels(show) {
-        // TODO: Implement labels toggle
     }
 
     // Area selection and location
