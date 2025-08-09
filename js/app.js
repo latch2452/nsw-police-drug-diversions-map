@@ -574,7 +574,33 @@ class DiversionsApp {
 
     // Toggle map layers
     toggleBoundaries(show) {
-        // TODO: Implement boundaries layer when GeoJSON data is available
+        if (show && !this.boundariesLayer) {
+            // Create a simple boundary layer as placeholder
+            // Since we don't have actual boundary data, create a visual indicator
+            const boundaryCoords = [
+                [[-32.0, 148.0], [-32.0, 154.0], [-38.0, 154.0], [-38.0, 148.0], [-32.0, 148.0]]
+            ];
+            
+            this.boundariesLayer = L.polygon(boundaryCoords, {
+                color: '#333333',
+                weight: 2,
+                opacity: 0.5,
+                fillColor: 'transparent',
+                fillOpacity: 0,
+                dashArray: '5,5'
+            }).addTo(this.map);
+            
+            this.boundariesLayer.bindPopup(`
+                <div class="boundary-popup">
+                    <h6><i class="fas fa-border-style me-2"></i>NSW State Boundary</h6>
+                    <p>Approximate NSW border outline</p>
+                    <small class="text-muted">For reference only</small>
+                </div>
+            `);
+        } else if (!show && this.boundariesLayer) {
+            this.map.removeLayer(this.boundariesLayer);
+            this.boundariesLayer = null;
+        }
     }
 
     toggleHeatmap(show) {
@@ -605,6 +631,8 @@ class DiversionsApp {
             this.showDiversionLineAnalysis(false);
             this.map.removeLayer(this.diversionLineLayer);
             this.diversionLineLayer = null;
+            // Restore original markers
+            this.addMarkersToMap();
         }
     }
 
@@ -675,14 +703,14 @@ class DiversionsApp {
 
         boundaryLine.bindPopup(`
             <div class="boundary-popup">
-                <h5><i class="fas fa-divide me-2"></i>Diversion Line Boundary</h5>
+                <h5><i class="fas fa-divide me-2"></i>Diversion Line Boundary (Latte Line)</h5>
                 <p><strong>Inner Zone:</strong> Higher diversion rates<br>
                 <strong>Outer Zone:</strong> Lower diversion rates</p>
                 <small class="text-muted">Approximate geographic boundary</small>
             </div>
         `);
 
-        this.diversionLineLayer = L.layerGroup([boundaryLine]);
+        this.diversionLineLayer = boundaryLine;
     }
 
     showDiversionLineAnalysis(show) {
