@@ -225,6 +225,9 @@ class DiversionsApp {
         // Top Diversions Chart
         this.initTopDiversionsChart();
         
+        // Bottom Diversions Chart
+        this.initBottomDiversionsChart();
+        
         // Rate Distribution Chart
         this.initRateDistributionChart();
         
@@ -248,6 +251,55 @@ class DiversionsApp {
                     data: topAreas.map(area => area.diversionRate),
                     backgroundColor: topAreas.map(area => DataUtils.getColorByRate(area.diversionRate)),
                     borderColor: topAreas.map(area => DataUtils.getColorByRate(area.diversionRate)),
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return `${context.parsed.y}% diversion rate`;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Diversion Rate (%)'
+                        }
+                    },
+                    x: {
+                        ticks: {
+                            maxRotation: 45
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    initBottomDiversionsChart() {
+        const ctx = document.getElementById('bottom-diversions-chart').getContext('2d');
+        const bottomAreas = DataUtils.getBottomDiversionAreas(10);
+        
+        this.charts.bottomDiversions = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: bottomAreas.map(area => area.name.replace(' PAC', '').replace(' PD', '')),
+                datasets: [{
+                    label: 'Diversion Rate (%)',
+                    data: bottomAreas.map(area => area.diversionRate),
+                    backgroundColor: bottomAreas.map(area => DataUtils.getColorByRate(area.diversionRate)),
+                    borderColor: bottomAreas.map(area => DataUtils.getColorByRate(area.diversionRate)),
                     borderWidth: 1
                 }]
             },

@@ -659,6 +659,13 @@ const DataUtils = {
             .slice(0, limit);
     },
 
+    // Get bottom areas by diversion rate
+    getBottomDiversionAreas: function(limit = 10) {
+        return [...nswDiversionsData]
+            .sort((a, b) => a.diversionRate - b.diversionRate)
+            .slice(0, limit);
+    },
+
     // Get areas grouped by rate category
     getAreasByCategory: function() {
         const categories = {
