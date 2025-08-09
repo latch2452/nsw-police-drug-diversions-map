@@ -3,8 +3,6 @@ class DiversionsApp {
     constructor() {
         this.map = null;
         this.markers = [];
-        this.heatmapLayer = null;
-        this.boundariesLayer = null;
         this.diversionLineLayer = null;
         this.currentData = nswDiversionsData;
         this.dataTable = null;
@@ -531,14 +529,6 @@ class DiversionsApp {
         });
         
         // Layer controls
-        document.getElementById('show-boundaries').addEventListener('change', (e) => {
-            this.toggleBoundaries(e.target.checked);
-        });
-        
-        document.getElementById('show-heatmap').addEventListener('change', (e) => {
-            this.toggleHeatmap(e.target.checked);
-        });
-        
         document.getElementById('show-diversion-line').addEventListener('change', (e) => {
             this.toggleDiversionLine(e.target.checked);
         });
@@ -573,56 +563,6 @@ class DiversionsApp {
     }
 
     // Toggle map layers
-    toggleBoundaries(show) {
-        if (show && !this.boundariesLayer) {
-            // Create a simple boundary layer as placeholder
-            // Since we don't have actual boundary data, create a visual indicator
-            const boundaryCoords = [
-                [[-32.0, 148.0], [-32.0, 154.0], [-38.0, 154.0], [-38.0, 148.0], [-32.0, 148.0]]
-            ];
-            
-            this.boundariesLayer = L.polygon(boundaryCoords, {
-                color: '#333333',
-                weight: 2,
-                opacity: 0.5,
-                fillColor: 'transparent',
-                fillOpacity: 0,
-                dashArray: '5,5'
-            }).addTo(this.map);
-            
-            this.boundariesLayer.bindPopup(`
-                <div class="boundary-popup">
-                    <h6><i class="fas fa-border-style me-2"></i>NSW State Boundary</h6>
-                    <p>Approximate NSW border outline</p>
-                    <small class="text-muted">For reference only</small>
-                </div>
-            `);
-        } else if (!show && this.boundariesLayer) {
-            this.map.removeLayer(this.boundariesLayer);
-            this.boundariesLayer = null;
-        }
-    }
-
-    toggleHeatmap(show) {
-        if (show && !this.heatmapLayer) {
-            const heatmapData = this.currentData.map(area => [
-                area.coordinates[0],
-                area.coordinates[1],
-                area.diversionRate / 100
-            ]);
-            
-            this.heatmapLayer = L.heatLayer(heatmapData, {
-                blur: 25,
-                maxZoom: 18,
-                minOpacity: 0.3,
-                radius: 35
-            }).addTo(this.map);
-        } else if (!show && this.heatmapLayer) {
-            this.map.removeLayer(this.heatmapLayer);
-            this.heatmapLayer = null;
-        }
-    }
-
     toggleDiversionLine(show) {
         if (show && !this.diversionLineLayer) {
             this.showDiversionLineAnalysis(true);
