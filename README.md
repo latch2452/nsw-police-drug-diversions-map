@@ -21,10 +21,10 @@ An interactive web application that visualizes NSW Police diversions data across
 ### 🗺️ Interactive Map
 - **Leaflet-based mapping** with responsive circle markers
 - **Color-coded visualization** based on diversion rates:
-  - � High (≥30%) - Green (Good performance)
+  - 🟢 High (≥30%) - Green (Good performance)
   - 🟠 Medium (15-29%) - Orange  
-  - � Low (5-14%) - Orange-Red
-  - � Very Low (<5%) - Red (Poor performance)
+  - 🟡 Low (5-14%) - Orange-Red
+  - 🔴 Very Low (<5%) - Red (Poor performance)
 - **Dynamic circle sizing** based on total cases and diversion rate
 - **Interactive popups** with detailed area statistics
 - **Optional heatmap layer** for trend visualization
