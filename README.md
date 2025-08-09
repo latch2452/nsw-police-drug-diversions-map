@@ -6,7 +6,7 @@ An interactive web application that visualizes NSW Police diversions data across
 
 **📊 View the live interactive map:** [https://latch2452.github.io/nsw-police-drug-diversions-map/](https://latch2452.github.io/nsw-police-drug-diversions-map/)
 
-*Experience the full interactive visualization with real NSW Police diversions data, mapping, and analytics dashboard.*
+*See the full interactive visualization with real NSW Police diversions data, mapping, and analytics dashboard.*
 
 ## ⚠️ Important Disclaimers
 
