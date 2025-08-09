@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NSW Police Drug Diversions Data Map - Independent Public Interest Analysis</title>
+    <meta name="description" content="Interactive visualization of NSW Police drug diversion data obtained through research by Hon. Cate Faehrmann MLC. Independent public interest project - not affiliated with NSW Police Force.">
+    <meta name="keywords" content="NSW Police, drug diversions, public interest, transparency, Cate Faehrmann, data visualization">
+    <meta name="author" content="Independent Public Interest Project">
+    
+    <!-- CSS Dependencies -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-map-marked-alt me-2"></i>
+                NSW Police Drug Diversions Map
+                <small class="d-block" style="font-size: 0.65rem; opacity: 0.8;">Independent Public Interest Project</small>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#map-section">Map</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#data-section">Data Table</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#charts-section">Analytics</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container-fluid main-content">
+        
+        <!-- Header Section -->
+        <div class="row">
+            <div class="col-12">
+                <div class="hero-section">
+                    <div class="container">
+                        <h1 class="display-4 mb-3">NSW Police Drug Diversions Data</h1>
+                        <p class="lead mb-2">Interactive map showing diversions vs charges by Police Area Command/District since the scheme began</p>
+                        <p class="mb-4">
+                            <small class="text-light">
+                                <i class="fas fa-user-tie me-1"></i>
+                                Data obtained through research by <strong>The Hon. Cate Faehrmann MLC</strong>, NSW Greens Party | 
+                                <i class="fas fa-shield-alt me-1"></i>
+                                Source: NSW Police Force
+                            </small>
+                        </p>
+                        <div class="row g-3 stats-overview">
+                            <div class="col-md-3">
+                                <div class="stat-card">
+                                    <div class="stat-number" id="total-cases">0</div>
+                                    <div class="stat-label">Total Cases</div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="stat-card">
+                                    <div class="stat-number" id="total-diversions">0</div>
+                                    <div class="stat-label">Total Diversions</div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="stat-card">
+                                    <div class="stat-number" id="total-charges">0</div>
+                                    <div class="stat-label">Total Charges</div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="stat-card">
+                                    <div class="stat-number" id="avg-diversion-rate">0%</div>
+                                    <div class="stat-label">Avg. Diversion Rate</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Map Section -->
+        <section id="map-section" class="section">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-lg-9">
+                        <div class="map-container">
+                            <div id="map" class="map"></div>
+                            <!-- Map Legend -->
+                            <div class="map-legend">
+                                <h6><i class="fas fa-palette me-2"></i>Diversion Rate</h6>
+                                <div class="legend-item">
+                                    <span class="legend-color" style="background-color: #2e7d32;"></span>
+                                    ≥ 30% (High - Good)
+                                </div>
+                                <div class="legend-item">
+                                    <span class="legend-color" style="background-color: #ff9800;"></span>
+                                    15–29% (Medium)
+                                </div>
+                                <div class="legend-item">
+                                    <span class="legend-color" style="background-color: #ff5722;"></span>
+                                    5–14% (Low)
+                                </div>
+                                <div class="legend-item">
+                                    <span class="legend-color" style="background-color: #d32f2f;"></span>
+                                    < 5% (Very Low - Poor)
+                                </div>
+                                <small class="text-muted">
+                                    <i class="fas fa-info-circle me-1"></i>
+                                    Circle size represents total cases & rate
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3">
+                        <div class="controls-panel">
+                            <h5><i class="fas fa-sliders-h me-2"></i>Map Controls</h5>
+                            
+                            <!-- Search -->
+                            <div class="mb-3">
+                                <label for="area-search" class="form-label">Search Area</label>
+                                <input type="text" class="form-control" id="area-search" placeholder="Search PAC/PD...">
+                            </div>
+
+                            <!-- Filters -->
+                            <div class="mb-3">
+                                <label for="rate-filter" class="form-label">Diversion Rate Range</label>
+                                <select class="form-select" id="rate-filter">
+                                    <option value="all">All Rates</option>
+                                    <option value="high">High (≥30%)</option>
+                                    <option value="medium">Medium (15-29%)</option>
+                                    <option value="low">Low (5-14%)</option>
+                                    <option value="very-low">Very Low (<5%)</option>
+                                </select>
+                            </div>
+
+                            <!-- Layer Controls -->
+                            <div class="mb-3">
+                                <label class="form-label">Map Layers</label>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="show-boundaries" checked>
+                                    <label class="form-check-label" for="show-boundaries">
+                                        Show Boundaries
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="show-heatmap">
+                                    <label class="form-check-label" for="show-heatmap">
+                                        Show Heatmap
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="show-diversion-line">
+                                    <label class="form-check-label" for="show-diversion-line">
+                                        Show Diversion Line
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="show-labels" checked>
+                                    <label class="form-check-label" for="show-labels">
+                                        Show Labels
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Diversion Line Analysis -->
+                            <div class="mb-3" id="diversion-line-info" style="display: none;">
+                                <div class="diversion-line-analysis">
+                                    <h6><i class="fas fa-divide me-2"></i>Diversion Line Analysis</h6>
+                                    <div id="diversion-line-stats"></div>
+                                    <small class="text-muted">
+                                        <i class="fas fa-info-circle me-1"></i>
+                                        Geographic patterns in diversion rates
+                                    </small>
+                                </div>
+                            </div>
+
+                            <!-- Selected Area Info -->
+                            <div class="selected-area-info" id="selected-area-info" style="display: none;">
+                                <h6><i class="fas fa-map-pin me-2"></i>Selected Area</h6>
+                                <div id="selected-area-details"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Data Table Section -->
+        <section id="data-section" class="section">
+            <div class="container-fluid">
+                <h2 class="section-title">
+                    <i class="fas fa-table me-2"></i>
+                    Data Table
+                </h2>
+                <div class="table-responsive">
+                    <table id="diversions-table" class="table table-striped table-hover">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Police Area Command/District</th>
+                                <th>Diversions</th>
+                                <th>Charges</th>
+                                <th>Total Cases</th>
+                                <th>Diversion Rate</th>
+                                <th>Charge Rate</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Data will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- Charts Section -->
+        <section id="charts-section" class="section">
+            <div class="container-fluid">
+                <h2 class="section-title">
+                    <i class="fas fa-chart-bar me-2"></i>
+                    Analytics Dashboard
+                </h2>
+                <div class="row">
+                    <div class="col-lg-6 mb-4">
+                        <div class="chart-container">
+                            <h5>Top 10 Highest Diversion Rates</h5>
+                            <canvas id="top-diversions-chart"></canvas>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 mb-4">
+                        <div class="chart-container">
+                            <h5>
+                                Distribution of Cases by Rate Category
+                                <span class="chart-info-icon ms-2 text-muted" 
+                                      onclick="showChartInfo(this)" 
+                                      style="cursor: pointer; font-size: 0.9rem;">
+                                    <i class="fas fa-info-circle"></i>
+                                </span>
+                            </h5>
+                            <canvas id="rate-distribution-chart"></canvas>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 mb-4">
+                        <div class="chart-container">
+                            <h5>Geographic Divide: Inner City vs Outer Areas</h5>
+                            <canvas id="geographic-analysis-chart"></canvas>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 mb-4">
+                        <div class="chart-container">
+                            <h5>Charges vs Diversions Comparison</h5>
+                            <canvas id="charges-vs-diversions-chart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer bg-dark text-light">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <h6 class="text-warning mb-3">
+                        <i class="fas fa-exclamation-triangle me-2"></i>Important Disclaimers
+                    </h6>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6 class="text-light mb-2">Data Source & Attribution</h6>
+                            <p class="small mb-2">
+                                This visualization displays drug diversion data obtained from NSW Police through research 
+                                conducted by <strong>The Hon. Cate Faehrmann MLC</strong>, NSW Greens Member of Parliament.
+                            </p>
+                            <p class="small mb-3">
+                                <strong>Data Source:</strong> NSW Police Force<br>
+                                <strong>Research Attribution:</strong> The Hon. Cate Faehrmann MLC, NSW Greens<br>
+                                <strong>Data Period:</strong> As reported by NSW Police<br>
+                                <strong>Geographic Data:</strong> Approximate locations only
+                            </p>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <h6 class="text-light mb-2">Copyright & Trademark Notice</h6>
+                            <p class="small mb-2">
+                                NSW Police Force name, logo, and associated trademarks are owned by the 
+                                Crown in right of the State of New South Wales. This is an independent 
+                                public interest project and is not affiliated with, endorsed by, or 
+                                sponsored by NSW Police Force.
+                            </p>
+                            <p class="small mb-3">
+                                <strong>Public Interest Purpose:</strong> This visualization is created for 
+                                public transparency and educational purposes regarding drug diversion practices 
+                                across NSW Police Area Commands and Police Districts.
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div class="row border-top pt-3">
+                        <div class="col-md-8">
+                            <p class="mb-1 small">
+                                &copy; 2025 NSW Police Drug Diversions Data Visualization | 
+                                Independent Public Interest Project
+                            </p>
+                            <small class="text-muted">
+                                This project is not affiliated with NSW Police Force. 
+                                All data sourced from official NSW Police records via parliamentary research.
+                            </small>
+                        </div>
+                        <div class="col-md-4 text-end">
+                            <small class="text-muted">Last updated: August 2025</small>
+                            <br>
+                            <small class="text-muted">
+                                <i class="fas fa-balance-scale me-1"></i>Public Interest Use
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript Dependencies -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/leaflet.heat@0.2.0/dist/leaflet-heat.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Custom JavaScript -->
+    <script src="js/data.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

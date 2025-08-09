@@ -1,0 +1,50 @@
+{
+  "name": "nsw-police-diversions-map",
+  "version": "1.0.0",
+  "description": "Interactive map displaying NSW Police diversions data by Police Area Command and Police District",
+  "main": "index.html",
+  "scripts": {
+    "start": "npx http-server . -p 8080 -o",
+    "dev": "npx http-server . -p 8080 -o",
+    "build": "echo 'No build step required for static site'",
+    "test": "echo 'No tests specified'"
+  },
+  "keywords": [
+    "nsw-police",
+    "drug-diversions",
+    "diversions",
+    "map",
+    "leaflet",
+    "data-visualization",
+    "statistics",
+    "courts",
+    "public-research",
+    "public-interest",
+    "transparency",
+    "independent",
+    "public-interest-project",
+    "cate-faehrmann",
+    "nsw-greens",
+    "public-policy",
+    "nsw-police-force",
+    "nsw-greens-party",
+    "nsw-police-diversions",
+    "nsw-police-data",
+    "nsw-police-map",
+    "nsw-police-transparency",
+    "nsw-police-diversion-data",
+    "nsw-police-diversion-map",
+    "nsw-police-diversion-statistics",
+    "nsw-police-diversion-visualization",
+    "nsw-police-diversion-analysis",
+    "nsw-police-diversion-research"
+  ],
+  "author": "Public Interest Project - Drug Diversions Analysis",
+  "license": "MIT",
+  "devDependencies": {
+    "http-server": "^14.1.1"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}
