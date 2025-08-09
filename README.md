@@ -2,6 +2,12 @@
 
 An interactive web application that visualizes NSW Police diversions data across Police Area Commands (PACs) and Police Districts (PDs). The application shows the percentage of people diverted versus those charged since the diversion scheme began.
 
+## 🌐 Live Application
+
+**📊 View the live interactive map:** [https://latch2452.github.io/nsw-police-drug-diversions-map/](https://latch2452.github.io/nsw-police-drug-diversions-map/)
+
+*Experience the full interactive visualization with real NSW Police diversions data, mapping, and analytics dashboard.*
+
 ## ⚠️ Important Disclaimers
 
 **Data Attribution**: This visualization displays NSW Police drug diversion data obtained through research conducted by **The Hon. Cate Faehrmann MLC**, NSW Greens Party Member of Parliament.
