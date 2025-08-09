@@ -532,10 +532,6 @@ class DiversionsApp {
         document.getElementById('show-diversion-line').addEventListener('change', (e) => {
             this.toggleDiversionLine(e.target.checked);
         });
-        
-        document.getElementById('show-labels').addEventListener('change', (e) => {
-            this.toggleLabels(e.target.checked);
-        });
     }
 
     // Event handlers
@@ -689,10 +685,6 @@ class DiversionsApp {
         } else {
             infoPanel.style.display = 'none';
         }
-    }
-
-    toggleLabels(show) {
-        // TODO: Implement labels toggle
     }
 
     // Area selection and location
